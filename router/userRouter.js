@@ -23,11 +23,24 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.patch('/:id', (req, res) => {
-  res.json({
-    message: `Infos of user whose id is ${req.params.id} will updated.`,
-    data: req.body,
-  });
+router.patch('/:id', async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      { _id: req.params.id },
+      req.body,
+      { new: true }
+    );
+
+    if (user) {
+      return res.json(user);
+    } else {
+      return res.status(404).json({
+        message: 'User not found.',
+      });
+    }
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 router.delete('/:id', async (req, res) => {
